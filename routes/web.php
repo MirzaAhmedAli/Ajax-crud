@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AjaxController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -16,3 +17,13 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+// Route::get('test', function () {
+//     return view('test');
+// })->name('test');
+
+
+Route::get('products', [App\Http\Controllers\AjaxController::class, 'index'])->name('page');
+Route::get('/subcategories/{id}', [AjaxController::class, 'getSubcategories']);
+Route::get('imageup', [App\Http\Controllers\AjaxController::class, 'image']);
+
+
