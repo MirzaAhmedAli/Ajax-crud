@@ -17,13 +17,16 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
-// Route::get('test', function () {
-//     return view('test');
-// })->name('test');
+//  Route::get('test', function () {
+//      return view('test');
+//  })->name('test');
 
 
 Route::get('products', [App\Http\Controllers\AjaxController::class, 'index'])->name('page');
 Route::get('/subcategories/{id}', [AjaxController::class, 'getSubcategories']);
 Route::get('imageup', [App\Http\Controllers\AjaxController::class, 'image']);
+Route::get('categories',[App\Http\Controllers\CategoryController::class, 'index'])->name('category');
+Route::get('subcategories',[App\Http\Controllers\SubcategoryController::class, 'index'])->name('subcategory');
+
 
 
