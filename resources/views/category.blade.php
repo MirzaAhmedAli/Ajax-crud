@@ -30,7 +30,7 @@
       <tr>
           <th>
               <span class="flex items-center">
-                 Name
+                 Image
                  <svg class="w-4 h-4 ms-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                   <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m8 15 4 4 4-4m0-6-4-4-4 4"/>
               </svg>
@@ -38,7 +38,7 @@
           </th>
           <th>
               <span class="flex items-center">
-                  Image
+                  Name
                   <svg class="w-4 h-4 ms-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m8 15 4 4 4-4m0-6-4-4-4 4"/>
                 </svg>
@@ -67,14 +67,14 @@
         </th>  
       </tr>
   </thead>
-  <tbody>
+  <tbody id="categories-table-body">
    @foreach ($categories as $category)
     @php $unique_id = $loop->index; @endphp
       <tr>
-          <td class="font-medium text-gray-900 whitespace-nowrap dark:text-white">{{$category->name}}</td>
-          <td>AAPL</td>
-          <td>{{ $category->has_subcategories_count > 0 ? $category->has_subcategories_count : 'No Subcategories' }}</td>
-          <td>$3.04T</td>
+          <td><img src="{{asset($category->image)}}" class="object-cover w-20 h-20 mx-4 rounded-full"></td>
+          <td class="font-medium text-gray-900 text-base whitespace-nowrap dark:text-white">{{$category->name}}</td>
+          <td class="text-base">{{ $category->has_subcategories_count > 0 ? $category->has_subcategories_count : 'No Subcategories' }}</td>
+          <td class="text-base">{{ $category->created_at->format('j M Y') }}</td>
           <td><a href="${data.edit_url}" class="edit-button">
             <button data-tooltip-target="tooltip-animation-edit-{{ $unique_id }}" type="button" class=" text-white bg-slate-200 shadow-lg hover:shadow-2xl hover:bg-slate-400 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center me-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
               <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
@@ -117,7 +117,7 @@
                 <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
                     Create New Category
                 </h3>
-                <button type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-toggle="crud-modal">
+                <button type="button" id="closemodal" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-toggle="crud-modal">
                     <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
                     </svg>
@@ -125,24 +125,28 @@
                 </button>
             </div>
             <!-- Modal body -->
-            <form class="p-4 md:p-5" enctype="multipart/form-data">
+            <form class="p-4 md:p-5" id="createform">
+              @csrf
                 <div class="grid gap-4 mb-4 grid-cols-2">
                     <div class="col-span-2">
                         <label for="name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Name</label>
                         <input type="text" name="name" id="name" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Type Category name" required="">
-                    </div>
+                        @error('name') <span class="text-danger text-red-700">{{$message}}</span> @enderror
+                      </div>
                     <div class="col-span-2">
                         <label for="description" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Product Description</label>
-                        <textarea id="description" rows="4" class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Write Category description here"></textarea>                    
-                    </div>
+                        <textarea id="description" name="description" rows="4" class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required="" placeholder="Write Category description here"></textarea>                    
+                        @error('description') <span class="text-danger text-red-700">{{$message}}</span> @enderror
+                      </div>
                     <div class="col-span-2">
                       <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white" for="file_input">Upload file</label>
-                      <input name="image" class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400" id="file_input" type="file">
+                      <input name="image" id="image" class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400" required="" id="file_input" type="file">
+                      @error('image') <span class="text-danger text-red-700">{{$message}}</span> @enderror
                       <div class="img-holder mt-4 w-24 h-24 rounded-full object-cover overflow-hidden"></div>
                     </div>
                 </div>
                 
-                <button type="submit" class="text-white inline-flex items-center bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                <button type="submit" id="sbmtbtn" class="text-white inline-flex items-center bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
                     <svg class="me-1 -ms-1 w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd"></path></svg>
                     Add new product
                 </button>
@@ -158,10 +162,34 @@
         searchable: true,
         sortable: true
     });
-}
+  }
 
-$('input[type="file"][name="image"]').val('');
-            //Image preview
+  $(document).ready(function(){
+    $("#createform").submit(function(event){
+      event.preventDefault();
+
+      var form = $("#createform")[0];
+      var data = new FormData(form);
+
+      //$("#sbmtbtn");
+
+      $.ajax({
+        type: "POST",
+        url: "{{route('createcat')}}",
+        data: data,
+        processData:false,
+        contentType:false,
+
+        success: function(data) {
+          window.location.href = "http://127.0.0.1:8000/categories"
+        }
+
+        
+      });
+    });
+  });
+
+  $('input[type="file"][name="image"]').val('');
             $('input[type="file"][name="image"]').on('change', function(){
                 var img_path = $(this)[0].value;
                 var img_holder = $('.img-holder');

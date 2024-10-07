@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Category;
 use App\Models\Subcategory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -17,6 +18,7 @@ class AjaxController extends Controller
         $subcategories = Subcategory::where('category_id', $id)->get();
         return response()->json($subcategories);    
     }
+
 
     public function image(Request $request){
         $filemname = null;
